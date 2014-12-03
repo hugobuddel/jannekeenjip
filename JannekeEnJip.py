@@ -51,6 +51,8 @@ class Book():
             data = self.data_jannekeenjip[filename]
             data = verwissel_woorden(data, 'Jip', 'Janneke')
             data = verwissel_woorden(data, 'vader', 'moeder')
+            data = verwissel_woorden(data, 'hij ', 'ze ')
+            data = verwissel_woorden(data, 'haar', 'zijn')
             
             self.data_jannekeenjip[filename] = data
     
