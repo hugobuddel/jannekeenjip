@@ -1,9 +1,19 @@
 from zipfile import ZipFile
 import copy
 
+from woorden import (
+    werkwoorden_derde_meervoud,
+    zelfstandigenaamwoorden,
+    bijwoorden,
+    bijvoegelijkenaamwoorden,
+    lidwoorden,
+    werkwoorden,
+    interpunctie,
+)
+
 class Book():
     
-    interpuncties = ["&#x2018;", "&#x2019;", " ", ".", ",", ":", ";", "!", "?"]
+    
     
     def __init__(self):
         self.filename_jipenjanneke = None
@@ -62,23 +72,11 @@ class Book():
             return data
         
         def zewerkwoorden(data):
-            werkwoordparen = [
-                ("is", "zijn"),
-                ("heeft", "hebben"),
-                ("zegt", "zeggen"),
-                ("kijkt", "kijken"),
-                ("zit", "zitten"),
-                ("lacht", "lachen"),
-                ("loopt", "lopen"),
-                ("maakt", "maken"),
-                ("speelt", "spelen"),
-                # etc...
-            ]
-            for (derde, meervoud) in werkwoordparen:
+            for (derde, meervoud) in werkwoorden_derde_meervoud:
                 data = zewerkwoord(data, derde, meervoud)
 
-            for interpunctie1 in self.interpuncties:
-                for interpunctie2 in self.interpuncties:
+            for interpunctie1 in interpunctie:
+                for interpunctie2 in interpunctie:
                     data = data.replace(interpunctie1 + "hij" + interpunctie2, interpunctie1 + "ze" + interpunctie2)
                     data = data.replace(interpunctie1 + "Hij" + interpunctie2, interpunctie1 + "Ze" + interpunctie2)
             
@@ -86,6 +84,49 @@ class Book():
             data = data.replace("XY_Hij_XY", "Hij")
             
             return data
+        
+        def zijnhaar(data):
+            """
+            Verwissel zijn en haar, tenzij zijn een werkwoord is.
+            Verwissel hem en haar.
+            """
+            # Boek 2, Boefje spelen: "komt haar achterna"
+            # Boek 2, Appel: "Jip heeft haar schort"
+            haar_znw = lidwoorden + ['je', 'jouw', 'Jips', 'Jannekes']
+            for w in haar_znw:
+                data = data.replace(w + " haar", w + "ZZ_haar_ZZ")
+                data = data.replace(w.capitalize() + " haar", w.capitalize() + "ZZ_haar_ZZ")
+            
+            # Very schalable...
+            haar_bezit = bijvoegelijkenaamwoorden + zelfstandigenaamwoorden
+            for w in haar_bezit:
+                data = data.replace(" haar " + w, " XY_zijn_XY " + w)
+                data = data.replace(" Haar " + w, " XY_Zijn_XY " + w)
+            
+            for i in interpunctie:
+                data = data.replace(" haar" + i, " XY_hem_XY" + i)
+                data = data.replace(" Haar" + i, " XY_Hem_XY" + i)
+            
+            # Very schalable...
+            zijn_bezit = bijvoegelijkenaamwoorden + zelfstandigenaamwoorden
+            for w in zijn_bezit:
+                data = data.replace(" zijn " + w, " XX_haar_XX " + w)
+                data = data.replace(" Zijn " + w, " XX_Haar_XX " + w)
+                # TODO: z'n
+            
+            data = data.replace("XX_haar_XX", "haar")
+            data = data.replace("XX_Haar_XX", "Haar")
+            data = data.replace("XY_zijn_XY", "zijn")
+            data = data.replace("XY_Zijn_XY", "Zijn")
+            data = data.replace("XY_hem_XY", "hem")
+            data = data.replace("XY_Hem_XY", "Hem")
+            data = data.replace("ZZ_haar_ZZ", "haar")
+            
+            return data
+            
+             
+            
+            
 
         # Haal eerst de spaties eruit, want daar wordt op gematched.
         # Haalt dit ook het watermark eruit?
@@ -95,11 +136,12 @@ class Book():
         
         # Dit werkt niet, maar is opgelost met zewerkwoorden().
         #data = verwissel_woorden(data, 'hij ', 'ze ')
-        
-        # Dit werkt ook niet, 'rohaaren' :). Nog niet opgelost.
-        #data = verwissel_woorden(data, 'haar', 'zijn')
-        
         data = zewerkwoorden(data)
+        
+        # Dit werkt ook niet, 'rohaaren' :). Opgelost met zijnhaar()
+        #data = verwissel_woorden(data, 'haar', 'zijn')
+        data = zijnhaar(data)
+        
         return data
 
     def hergender(self):
