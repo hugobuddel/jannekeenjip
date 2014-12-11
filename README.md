@@ -23,6 +23,7 @@ TEDOEN
 * Fouten:
   * Boek 2, egeltje: "Hij heeft hijker haar neus geprikt"
 
-* Alles netjes tokenizen in woorden i.p.v. al die string replaces.
-  
+* Tokenize alles netjes in woorden i.p.v. al die string replaces.
+* Gebruik echt woordenboek.
+* Check op "er/dat zijn ..." etc.
 
