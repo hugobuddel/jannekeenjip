@@ -21,7 +21,7 @@ TEDOEN
 * "z'n"
 
 * Fouten:
-  * ..
+  * Boek 2, egeltje: "Hij heeft hijker haar neus geprikt"
 
 * Alles netjes tokenizen in woorden i.p.v. al die string replaces.
   
