@@ -106,6 +106,8 @@ class Book():
             for i in interpunctie:
                 data = data.replace(" haar" + i, " XY_hem_XY" + i)
                 data = data.replace(" Haar" + i, " XY_Hem_XY" + i)
+                data = data.replace(" hem" + i, " XX_haar_XX" + i)
+                data = data.replace(" Hem" + i, " XX_Haar_XX" + i)
             
             # Very schalable...
             zijn_bezit = bijvoegelijkenaamwoorden + zelfstandigenaamwoorden
@@ -113,6 +115,8 @@ class Book():
                 data = data.replace(" zijn " + w, " XX_haar_XX " + w)
                 data = data.replace(" Zijn " + w, " XX_Haar_XX " + w)
                 # TODO: z'n
+
+
             
             data = data.replace("XX_haar_XX", "haar")
             data = data.replace("XX_Haar_XX", "Haar")

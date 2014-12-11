@@ -17,15 +17,12 @@ GEDAAN
 
 TEDOEN
 ------
-* zij (wordt dat gebruikt?)
-* haar / hem
-* haar (van lichaam)
 * Inhoudsopgave
+* "z'n"
 
 * Fouten:
-  * Boek 2, egeltje, 'nu kunnen de hondjes hem niet bijten', en nog 3x
-  * Boek 2, bootje, "En nu zitten hij dus op het grote bed."
+  * ..
 
-* Zorgvuldiger met woorden binnen woorden:
-  * Boek 2, egeltje, 'zeer -> 'hijer'
+* Alles netjes tokenizen in woorden i.p.v. al die string replaces.
+  
 
