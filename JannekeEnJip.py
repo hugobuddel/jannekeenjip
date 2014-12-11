@@ -3,6 +3,8 @@ import copy
 
 class Book():
     
+    interpuncties = ["&#x2018;", "&#x2019;", " ", ".", ",", ":", ";", "!", "?"]
+    
     def __init__(self):
         self.filename_jipenjanneke = None
         self.filename_jannekeenjip = None
@@ -21,8 +23,7 @@ class Book():
             }
             self.data_jannekeenjip = copy.copy(self.data_jipenjanneke)
     
-    def hergender(self):
-        filenames_html = [fn for fn in self.filenames if fn[-5:] == '.html']
+    def hergender_data(self, data):
         
         def verwissel_woorden(data, woord_man, woord_vrouw):
             data = data.replace(woord_man, "XX__XX")
@@ -47,14 +48,69 @@ class Book():
             data = data.replace("XY_LOWERCAPIT_XY", woord_man.lower().capitalize())
             return data
 
+        def zewerkwoord(data, derde, meervoud):
+            data = data.replace("ze " + derde, "XY_hij_XY " + derde)
+            data = data.replace("zij " + derde, "XY_hij_XY " + derde)
+            data = data.replace("Ze " + derde, "XY_Hij_XY " + derde)
+            data = data.replace("Zij " + derde, "XY_Hij_XY " + derde)
+            data = data.replace(derde + " zij", derde + " XY_hij_XY")
+            data = data.replace(derde.capitalize() + " zij", derde.capitalize() + " XY_hij_XY")
+            data = data.replace(derde + " ze", derde + " XY_hij_XY")
+            data = data.replace(derde.capitalize() + " ze", derde.capitalize() + " XY_hij_XY")
+            
+            
+            return data
+        
+        def zewerkwoorden(data):
+            werkwoordparen = [
+                ("is", "zijn"),
+                ("heeft", "hebben"),
+                ("zegt", "zeggen"),
+                ("kijkt", "kijken"),
+                ("zit", "zitten"),
+                ("lacht", "lachen"),
+                ("loopt", "lopen"),
+                ("maakt", "maken"),
+                ("speelt", "spelen"),
+                # etc...
+            ]
+            for (derde, meervoud) in werkwoordparen:
+                data = zewerkwoord(data, derde, meervoud)
+
+            for interpunctie1 in self.interpuncties:
+                for interpunctie2 in self.interpuncties:
+                    data = data.replace(interpunctie1 + "hij" + interpunctie2, interpunctie1 + "ze" + interpunctie2)
+                    data = data.replace(interpunctie1 + "Hij" + interpunctie2, interpunctie1 + "Ze" + interpunctie2)
+            
+            data = data.replace("XY_hij_XY", "hij")
+            data = data.replace("XY_Hij_XY", "Hij")
+            
+            return data
+
+        # Haal eerst de spaties eruit, want daar wordt op gematched.
+        # Haalt dit ook het watermark eruit?
+        data = data.replace("  ", " ")
+        data = verwissel_woorden(data, 'Jip', 'Janneke')
+        data = verwissel_woorden(data, 'vader', 'moeder')
+        
+        # Dit werkt niet, maar is opgelost met zewerkwoorden().
+        #data = verwissel_woorden(data, 'hij ', 'ze ')
+        
+        # Dit werkt ook niet, 'rohaaren' :). Nog niet opgelost.
+        #data = verwissel_woorden(data, 'haar', 'zijn')
+        
+        data = zewerkwoorden(data)
+        return data
+
+    def hergender(self):
+        filenames_html = [fn for fn in self.filenames if fn[-5:] == '.html']
+
         for filename in filenames_html:
             data = self.data_jannekeenjip[filename]
-            data = verwissel_woorden(data, 'Jip', 'Janneke')
-            data = verwissel_woorden(data, 'vader', 'moeder')
-            data = verwissel_woorden(data, 'hij ', 'ze ')
-            data = verwissel_woorden(data, 'haar', 'zijn')
-            
+            data = self.hergender_data(data)
             self.data_jannekeenjip[filename] = data
+    
+    
     
     def schrijf_epub(self, filename):
         self.filename_jannekeenjip = filename
